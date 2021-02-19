@@ -48,6 +48,7 @@ header{
     width: 300px;
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
+    border: 2px solid gray;
     outline: none;
 }
 
@@ -56,6 +57,7 @@ header{
     margin-left: -6px;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
+    border: 2px solid gray;
     cursor: pointer;
     background-color:palegreen;
     vertical-align:bottom;
