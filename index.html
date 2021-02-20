@@ -25,23 +25,34 @@
 
     <div class="tools-section">
         <button class="add-button">Add book</button>
+        <hr>
         <div class="sort-section">
-            <label for="sort">Sort by:</label>
-            <select name="sort" id="sort">
+            <label for="sort">Sort by</label>
+            <select name="sort" id="sort" class="sort-dropdown">
                 <option value="Oldest insertion date">Oldest insertion date</option>
                 <option value="Newest insertion date">Newest insertion date</option>
             </select>
         </div>
         <hr>
         <div class="information-section">
-            <p class="info-text">Information</p>
-            <hr>
-            <div class="info">
-                <p id="total">Total : <span>0</span></p>
-                <p id="read">Read : <span>0</span></p>
-                <p id="not-read">Not read : <span>0</span></p>
+            <p class="info-header">Information</p>
+            <div class="info-body">
+                <div class="info">
+                    <p class="title">Total: </p>
+                    <p class="number">0</p>
+                </div>
+                <div class="info">
+                    <p class="title">Read: </p>
+                    <p class="number">0</p>
+                </div>
+                <div class="info">
+                    <p class="title">Not read: </p>
+                    <p class="number">0</p>
+                </div>
             </div>
         </div>
+        <hr>
+        <p>Source code <a href="#">here</a></p>
     </div>
 
     <div class="books-section">
