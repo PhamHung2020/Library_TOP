@@ -83,7 +83,7 @@ header{
 
 .tools-section{
     position: fixed;
-    top: 98px;
+    top: 13vh;
     left: 0;
     background-color: greenyellow;
     height: 100vh;
@@ -148,7 +148,7 @@ header{
 
 .book-card{
     color:white;
-    max-width: 400px;
+    max-width: 370px;
     min-height: max-content;
     border-radius: 10px;
     box-shadow: 2px 2px 5px black;
@@ -227,6 +227,12 @@ button:hover{
 /* ---------------------------- */
 
 .books-section{
-    margin-top: 100px;
-    margin-left: 500px;
+    /* background-color: green; */
+    margin-top: 13vh;
+    margin-left: 18%;
+    padding-top: 20px;
+    padding-left: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 10px;
 }
