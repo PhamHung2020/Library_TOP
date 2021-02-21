@@ -6,8 +6,50 @@
 const BOOK_STATUS = {
     READ: "read",
     NOT_READ: "not-read",
-    READING: "reading"
+    READING: "reading",
+
+    IndexOf: function(status){
+        switch (status)
+        {
+            case this.READ:
+                return 1;
+            case this.NOT_READ:
+                return 2;
+            case this.READING:
+                return 3;
+        }
+    }
 }
+
+const Book_Info = {
+    div_info: document.querySelectorAll('#info-number'), // 0: total, 1: read, 2: not read, 3: reading
+    UpdateInfoTotal: function(){
+        this.div_info[0].textContent = service.book_shelf.length;
+        for (let i = 1; i < 4; ++i)
+            this.div_info[i].textContent = 0;
+        for (let i = 0; i < service.book_shelf.length; ++i)
+        {
+            ++this.div_info[BOOK_STATUS.IndexOf(service.book_shelf[i].book_status)].textContent;
+        }
+    },
+
+    UpdateInfoEdit: function(old_status, new_status){
+        --this.div_info[BOOK_STATUS.IndexOf(old_status)].textContent;
+        ++this.div_info[BOOK_STATUS.IndexOf(new_status)].textContent;
+    },
+
+    UpdateInfoAdd: function(status){
+        ++this.div_info[0].textContent;
+        ++this.div_info[BOOK_STATUS.IndexOf(status)].textContent;
+    },
+
+    UpdateInfoDelete: function(status){
+        --this.div_info[0].textContent;
+        --this.div_info[BOOK_STATUS.IndexOf(status)].textContent;
+    }
+}
+
+// SOME EXAMPLES
 
 const initialBook1 = {
     title: 'Harry Potter',
@@ -29,6 +71,8 @@ const initialBook2 = {
     id: 2,
 }
 
+// BOOK CONSTRUCTOR
+
 function Book(book_property) {
     this.title = book_property.title;
     this.authors = book_property.authors;
@@ -38,6 +82,8 @@ function Book(book_property) {
     this.book_status = book_property.book_status;
     this.id = book_property.id;
 }  
+
+// BOOKHTML CONSTRUCTOR
 
 function BookHTML(book) {
     this.book = book;
@@ -65,8 +111,9 @@ function BookHTML(book) {
 
     this.DropDownChange = function() {
         this.div_book_card.querySelector('select').addEventListener('change', (e) => {
+            Book_Info.UpdateInfoEdit(this.book.book_status, e.target.value);
             this.div_book_card.classList.remove(this.book.book_status);
-            book.book_status = e.target.value;
+            this.book.book_status = e.target.value;
             this.div_book_card.classList.add(this.book.book_status);
         })
     }
@@ -127,29 +174,45 @@ const book_view = {
 }
 
 const service = {
-    book_shelf: [initialBook1, initialBook2],
+    book_shelf: [],
+    GetAllBookFormLocalStorage: function(){
+        this.book_shelf = JSON.parse(localStorage.getItem('book_shelf'));
+        if (this.book_shelf == null)
+            this.book_shelf = [];
+    },
 
     Get: function (id) {
-        return this.book_shelf.filter((book) => book.id == id);
+        for (let i = 0; i < this.book_shelf.length; ++i)
+            if (this.book_shelf[i].id == id)
+                return this.book_shelf[i];
+        return null;
     },
 
     Add: function (book) {
         if (this.book_shelf.length == 0) book.id = 1;
         else {
-            const max_id = this.book_shelf[this.book_shelf.length - 1].id;
+            const max_id = +this.book_shelf[this.book_shelf.length - 1].id;
             book.id = max_id + 1;
         }
         this.book_shelf.push(book);
+        Book_Info.UpdateInfoAdd(book.book_status);
     },
 
-    Remove: function (id) {
-        const remove_book = this.Get(id);
+    Delete: function (book) {
+        const remove_book = this.Get(book.id);
         this.book_shelf.splice(this.book_shelf.indexOf(remove_book), 1);
+        Book_Info.UpdateInfoDelete(book.book_status);
     },
 
     Edit: function (book) {
-        let edit_book = this.Get(book.id);
-        edit_book = book;
+        const edit_book = this.Get(book.id);
+        const index = this.book_shelf.indexOf(edit_book);
+        this.book_shelf[index] = book;
+        Book_Info.UpdateInfoEdit(edit_book.book_status, book.book_status);
+    },
+
+    SaveToLocalStorage: function(){
+        localStorage.setItem('book_shelf', JSON.stringify(this.book_shelf));
     }
 }
 
@@ -172,7 +235,7 @@ const book_controller = {
 
     Delete: function(){
         const delete_book = form.ReturnBookPropertyFromInput();
-        service.Remove(delete_book.id);
+        service.Delete(delete_book);
         book_view.DeleteBook(delete_book.id);
     }
 }
@@ -237,9 +300,10 @@ const form = {
     SetInputValueFromBookProperty: function(book_property){
         const input_fields = this.form_wrapper.querySelector('.enter-information').children;
         for (let i = 0; i < input_fields.length; ++i) {
-            if (input_fields[i].tagName == 'INPUT' || input_fields[i].tagName == 'SELECT')
+            if (input_fields[i].tagName == 'INPUT')
                 input_fields[i].value = book_property[`${input_fields[i].id}`];
         }
+        this.form_wrapper.getElementsByTagName('select')[0].value = book_property['book_status'];
     },
 
     HiddenElement: function(isDisable){
@@ -283,8 +347,14 @@ document.querySelector('.add-button').addEventListener('click', () => {
 
 window.addEventListener('load', () => 
 {
+    service.GetAllBookFormLocalStorage();
     service.book_shelf.forEach(book => {
         const bookHTML = new BookHTML(book);
         book_view.DisplayNewBook(bookHTML);
-    })
+    });
+    Book_Info.UpdateInfoTotal();
 });
+
+window.addEventListener('beforeunload', () => {
+    service.SaveToLocalStorage();
+})
