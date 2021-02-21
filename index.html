@@ -47,89 +47,23 @@
                     <p class="title">Not read: </p>
                     <p class="number">0</p>
                 </div>
+                <div class="info">
+                    <p class="title">Reading: </p>
+                    <p class="number">0</p>
+                </div>
             </div>
         </div>
         <hr>
         <p class="source">Source code <a href="#">here</a></p>
     </div>
 
-    <div class="books-section">
-        <div class="book-card read">
-            <div class="title-author">
-                <h2 class="title">Harry Potter</h2>
-                <p class="author">by J.K.Rowling</p>
-            </div>
-            <div class="info-text">
-                <p>Publisher: Bloomsbury</p>
-                <p>Year: 1990</p>
-                <p>Number of pages: 300</p>
-                <div class="read-dropdown">
-                    <label for="read">Read: </label>
-                    <select name="read" id="read">
-                        <option value="Read">Read</option>
-                        <option value="Not-read">Not read</option>
-                        <option value="Reading">Reading</option>
-                    </select>
-                </div>
-            </div>
-            <div class="buttons">
-                <button class="edit button">Edit</button>
-                <button class="delete button">Delete</button>
-            </div>
-        </div>
-        <div class="book-card read">
-            <div class="title-author">
-                <h2 class="title">Harry Potter</h2>
-                <p class="author">by J.K.Rowling</p>
-            </div>
-            <div class="info-text">
-                <p>Publisher: Bloomsbury</p>
-                <p>Year: 1990</p>
-                <p>Number of pages: 300</p>
-                <div class="read-dropdown">
-                    <label for="read">Read: </label>
-                    <select name="read" id="read">
-                        <option value="Read">Read</option>
-                        <option value="Not-read">Not read</option>
-                        <option value="Reading">Reading</option>
-                    </select>
-                </div>
-            </div>
-            <div class="buttons">
-                <button class="edit button">Edit</button>
-                <button class="delete button">Delete</button>
-            </div>
-        </div>
-        <div class="book-card read">
-            <div class="title-author">
-                <h2 class="title">Harry Potter</h2>
-                <p class="author">by J.K.Rowling</p>
-            </div>
-            <div class="info-text">
-                <p>Publisher: Bloomsbury</p>
-                <p>Year: 1990</p>
-                <p>Number of pages: 300</p>
-                <div class="read-dropdown">
-                    <label for="read">Read: </label>
-                    <select name="read" id="read">
-                        <option value="Read">Read</option>
-                        <option value="Not-read">Not read</option>
-                        <option value="Reading">Reading</option>
-                    </select>
-                </div>
-            </div>
-            <div class="buttons">
-                <button class="edit button">Edit</button>
-                <button class="delete button">Delete</button>
-            </div>
-        </div>
-    </div>
+    <div class="books-section"></div>
 
     <div class="form-wrapper display-none">
-        <form action="" id="survey-form">
+        <div class="form">
             <h1 class="form-header">Add New Book</h1>
-
             <div class="enter-information">
+                <input id="id" type="hidden">
                 <label id="title-label" for="title">Title</label>
                 <input id="title" type="text" placeholder="Enter book title" required>
                 <label id="authors-label" for="authors">Authors</label>
@@ -137,23 +71,23 @@
                 <label id="publisher-label" for="publisher">Publisher</label>
                 <input id="publisher" type="text" placeholder="Enter book publisher" required>
                 <label id="publishing-year-label" for="publishing-year">Publishing Year</label>
-                <input id="publishing-year" type="number" placeholder="Publishing year" min="1950">
+                <input id="publishing_year" type="number" placeholder="Publishing year" min="1950" required>
                 <label id="number-of-pages-label" for="number-of-pages">Number of pages</label>
-                <input id="number-of-pages" type="number" placeholder="Number of pages" min="1">
+                <input id="number_of_pages" type="number" placeholder="Number of pages" min="1" required>
             </div>
 
             <div class="dropdown">
                 <label for="read-dropdown">Did you read this book?</label>
-                <select name="read-dropdown" id="read-dropdown" required>
+                <select name="read-dropdown" id="book_status" required>
                     <option value="read">Read</option>
                     <option value="not-read">Not read</option>
                     <option value="reading">Reading</option>
                 </select>
             </div>
 
-            <button class="form-button" id="submit" type="submit">Submit</button>
+            <button class="form-button" id="submit">Submit</button>
             <button class="form-button" id="cancel">Cancel</button>
-        </form>
+        </div>
     </div>
 
     <script src="./scripts.js"></script>
