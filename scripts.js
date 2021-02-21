@@ -49,28 +49,6 @@ const Book_Info = {
     }
 }
 
-// SOME EXAMPLES
-
-const initialBook1 = {
-    title: 'Harry Potter',
-    authors: 'J.K.Rowling',
-    publisher: 'Bloomsbury',
-    publishing_year: 1990,
-    number_of_pages: 300,
-    book_status: BOOK_STATUS.READING,
-    id: 1,
-}
-
-const initialBook2 = {
-    title: 'A Game Of Thrones',
-    authors: 'Unknown',
-    publisher: 'Unknown',
-    publishing_year: 1960,
-    number_of_pages: 800,
-    book_status: BOOK_STATUS.NOT_READ,
-    id: 2,
-}
-
 // BOOK CONSTRUCTOR
 
 function Book(book_property) {
@@ -157,7 +135,20 @@ function BookHTML(book) {
 
 const book_view = {
     book_container: document.querySelector('.books-section'),
-    DisplayNewBook: function(new_bookHTML) {
+
+    Display: function(book_shelf){
+        book_shelf.forEach(book => {
+            const bookHTML = new BookHTML(book);
+            this.AddBook(bookHTML);
+        })
+    },
+
+    Clear: function(){
+        while (this.book_container.firstElementChild)
+            this.book_container.firstElementChild.remove();
+    },
+
+    AddBook: function(new_bookHTML) {
         this.book_container.appendChild(new_bookHTML.ReturnHTMLCode());
     },
 
@@ -179,6 +170,18 @@ const service = {
         this.book_shelf = JSON.parse(localStorage.getItem('book_shelf'));
         if (this.book_shelf == null)
             this.book_shelf = [];
+    },
+
+    Search: function(keyword){
+        keyword = keyword.toLowerCase();
+        return this.book_shelf.filter(book => {
+            return book.id.toString().includes(keyword) ||
+                   book.title.toLowerCase().includes(keyword) ||
+                   book.authors.toLowerCase().includes(keyword) || 
+                   book.publisher.toLowerCase().includes(keyword) || 
+                   book.publishing_year.toString().includes(keyword) ||
+                   book.number_of_pages.toString().includes(keyword);
+        })
     },
 
     Get: function (id) {
@@ -222,7 +225,7 @@ const book_controller = {
         const new_book = new Book(book_property);
         service.Add(new_book);
         const new_bookHTML = new BookHTML(new_book);
-        book_view.DisplayNewBook(new_bookHTML);
+        book_view.AddBook(new_bookHTML);
     },
 
     Edit: function(){
@@ -345,16 +348,31 @@ document.querySelector('.add-button').addEventListener('click', () => {
     form.On_Add();
 })
 
+document.querySelector('.search-button').addEventListener('click', () => {
+    const keyword = document.querySelector('.search-bar').value;
+    book_view.Clear();
+    if (keyword != '')
+        book_view.Display(service.Search(keyword));
+    else
+        book_view.Display(service.book_shelf);
+})
+
 window.addEventListener('load', () => 
 {
     service.GetAllBookFormLocalStorage();
     service.book_shelf.forEach(book => {
         const bookHTML = new BookHTML(book);
-        book_view.DisplayNewBook(bookHTML);
+        book_view.AddBook(bookHTML);
     });
     Book_Info.UpdateInfoTotal();
 });
 
 window.addEventListener('beforeunload', () => {
     service.SaveToLocalStorage();
+});
+
+window.addEventListener('keydown', function(e){
+    console.log(e.key);
+    if (e.key == 'Enter')
+        document.querySelector('.search-button').click();
 })
