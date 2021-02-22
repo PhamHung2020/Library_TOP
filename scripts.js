@@ -1,7 +1,7 @@
 /* ---------------------------------------- */
 /* ------------- BOOK SECTION --------------*/ 
 /* ---------------------------------------- */
-
+let isAscending = true;
 
 const BOOK_STATUS = {
     READ: "read",
@@ -17,6 +17,8 @@ const BOOK_STATUS = {
                 return 2;
             case this.READING:
                 return 3;
+            default:
+                return -1;
         }
     }
 }
@@ -59,6 +61,7 @@ function Book(book_property) {
     this.number_of_pages = book_property.number_of_pages;
     this.book_status = book_property.book_status;
     this.id = book_property.id;
+    this.insertion_date = new Date();
 }  
 
 // BOOKHTML CONSTRUCTOR
@@ -135,7 +138,7 @@ function BookHTML(book) {
 
 const book_view = {
     book_container: document.querySelector('.books-section'),
-
+    
     Display: function(book_shelf){
         book_shelf.forEach(book => {
             const bookHTML = new BookHTML(book);
@@ -149,11 +152,13 @@ const book_view = {
     },
 
     AddBook: function(new_bookHTML) {
-        this.book_container.appendChild(new_bookHTML.ReturnHTMLCode());
+        if (isAscending)
+            this.book_container.appendChild(new_bookHTML.ReturnHTMLCode());
+        else
+            this.book_container.insertBefore(new_bookHTML.ReturnHTMLCode(), this.book_container.firstElementChild);
     },
 
     EditBook: function(new_bookHTML){
-        console.log(new_bookHTML.book.id);
         const edit_bookHTML = document.getElementById(`book-${new_bookHTML.book.id}`);
         edit_bookHTML.after(new_bookHTML.ReturnHTMLCode());
         this.book_container.removeChild(edit_bookHTML);
@@ -161,7 +166,7 @@ const book_view = {
 
     DeleteBook: function(id){
         this.book_container.removeChild(document.getElementById(`book-${id}`));
-    }
+    },
 }
 
 const service = {
@@ -240,7 +245,16 @@ const book_controller = {
         const delete_book = form.ReturnBookPropertyFromInput();
         service.Delete(delete_book);
         book_view.DeleteBook(delete_book.id);
-    }
+    },
+
+    Search: function(){
+        const keyword = document.querySelector('.search-bar').value;
+        book_view.Clear();
+        if (keyword != '')
+            book_view.Display(service.Search(keyword));
+        else
+            book_view.Display(service.book_shelf);
+    },
 }
 
 /* -------------------------------- */
@@ -349,21 +363,19 @@ document.querySelector('.add-button').addEventListener('click', () => {
 })
 
 document.querySelector('.search-button').addEventListener('click', () => {
-    const keyword = document.querySelector('.search-bar').value;
-    book_view.Clear();
-    if (keyword != '')
-        book_view.Display(service.Search(keyword));
-    else
-        book_view.Display(service.book_shelf);
+    book_controller.Search();
+})
+
+document.getElementById('sort').addEventListener('change', () => {
+    isAscending = !isAscending;
+    book_controller.Search();
 })
 
 window.addEventListener('load', () => 
 {
     service.GetAllBookFormLocalStorage();
-    service.book_shelf.forEach(book => {
-        const bookHTML = new BookHTML(book);
-        book_view.AddBook(bookHTML);
-    });
+    book_view.Clear();
+    book_view.Display(service.book_shelf);
     Book_Info.UpdateInfoTotal();
 });
 
@@ -375,4 +387,4 @@ window.addEventListener('keydown', function(e){
     console.log(e.key);
     if (e.key == 'Enter')
         document.querySelector('.search-button').click();
-})
+});
